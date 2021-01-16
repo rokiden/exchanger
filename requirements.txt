@@ -1,0 +1,5 @@
+aiobittrexapi
+signalr-client-aio
+aiogram
+configobj
+pycbrf
