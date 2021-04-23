@@ -2,6 +2,8 @@ import asyncio
 import itertools
 import logging
 import os
+import argparse
+
 from dataclasses import dataclass
 from typing import Optional
 
@@ -162,8 +164,15 @@ async def on_private(arg):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=os.environ.get('LOGLEVEL', 'INFO').upper())
-    config = ConfigObj('exchanger.ini')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config', type=open, default='exchanger.ini')
+    parser.add_argument('--log-level', default='INFO',
+                        choices=[logging.getLevelName(l) for l in (logging.DEBUG, logging.INFO, logging.WARN)])
+
+    args = parser.parse_args()
+
+    logging.basicConfig(level=args.log_level)
+    config = ConfigObj(args.config)
     back = backend.Backend(config['bx_key'], config['bx_secret'], {},
                            {'balance': on_private, 'order': on_private, 'execution': on_private})
     bot = tgbot.TGBot(config['tg_token'], config['tg_user_id'],
